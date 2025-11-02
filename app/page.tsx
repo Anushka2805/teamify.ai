@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Landing from "./src/homepage/page"; // import Landing page
+import Landing from "./homepage/page"; // import Landing page
 
 export default function Home() {
   return (
