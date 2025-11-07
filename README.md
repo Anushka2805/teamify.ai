@@ -62,4 +62,4 @@ It helps teams form, communicate, generate AI-powered pitch content, track deadl
 
 ---
 
-**Teamify.AI — Build faster. Collaborate smarter.**
+**Teamify.AI - Build faster. Collaborate smarter.**
