@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teamify.AI  
+**AI Powered Hackathon & Team Collaboration Platform**  
+> **Status: Ongoing Development**
 
-## Getting Started
+---
 
-First, run the development server:
+## Overview  
+Teamify.AI is a smart collaboration platform designed for hackathons and project teams.  
+It helps teams form, communicate, generate AI-powered pitch content, track deadlines, manage tasks, and store all project resources in one unified workspace.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-black?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Key Features  
 
-To learn more about Next.js, take a look at the following resources:
+### Team Management  
+- Create/Join teams using **invite code**  
+- Assign roles: **Leader, Developer, Designer, etc**  
+- Add **team bio, logo, intro**  
+- View team dashboard with **members & progress**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### AI Powered Tools  
+- **AI Chat Summarizer** – Summarizes team conversations  
+- **AI Pitch Generator** – Bullet points to structured pitch  
+- **AI Assistant** – Suggests next steps and workflow ideas  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Deadline & Progress  
+- **Countdown Timer** for hackathon/project deadline  
+- Task and progress tracking  
 
-## Deploy on Vercel
+### Storage & Resources  
+- Upload & store: **PPTs, PDFs, Docs, Images, Whiteboard screenshots**  
+- Save **Important Links** in one place  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Authentication  
+- Secure **Signup/Login**  
+- Team specific private workspace  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Notifications  
+- Alerts for uploads, deadlines, updates, summaries  
+
+---
+
+## Setup & Installation  
+> Instructions will be added soon as the project is actively in development.
+
+---
+
+### Project Status  
+![Ongoing](https://img.shields.io/badge/Project-Ongoing-yellow?style=for-the-badge)  
+![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-blue?style=for-the-badge)
+
+---
+
+**Teamify.AI — Build faster. Collaborate smarter.**
