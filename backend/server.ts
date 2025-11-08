@@ -13,6 +13,7 @@ import chatRoutes from "./src/routes/chat";
 import fileRoutes from "./src/routes/file";
 import taskRoutes from "./src/routes/tasks";
 import notificationRoutes from "./src/routes/notifications";
+import aiRoutes from "./src/routes/ai";
 import Message from "./src/models/Message"; 
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/ai", aiRoutes);
 
 // ✅ HTTP Server + Socket.io setup
 const server = http.createServer(app);
