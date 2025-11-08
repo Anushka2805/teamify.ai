@@ -17,10 +17,33 @@ export default function ChatPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-    // Duplicate blocker Set
-    const recentMessages = useRef(new Set());
+    // ✅ Summary states
+    const [summary, setSummary] = useState("");
+    const [loadingSummary, setLoadingSummary] = useState(false);
 
+    const recentMessages = useRef(new Set());
     const makeMsgKey = (name: string, text: string) => `${name}:${text}`;
+
+    // ✅ Generate Summary
+    const generateSummary = async () => {
+        if (messages.length === 0) return;
+
+        setLoadingSummary(true);
+        try {
+            const res = await fetch("http://localhost:5000/api/ai/summary", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chats: messages }),
+            });
+
+            const data = await res.json();
+            setSummary(data.summary);
+        } catch (err) {
+            console.log("Summary error", err);
+        } finally {
+            setLoadingSummary(false);
+        }
+    };
 
     const fetchMessages = async () => {
         const token = localStorage.getItem("token");
@@ -37,7 +60,7 @@ export default function ChatPage() {
 
             for (let m of data.messages) {
                 const key = makeMsgKey(m.senderName, m.text);
-                if (recentMessages.current.has(key)) continue; // ✅ skip duplicate
+                if (recentMessages.current.has(key)) continue;
 
                 recentMessages.current.add(key);
                 formatted.push({
@@ -59,7 +82,6 @@ export default function ChatPage() {
 
         newSocket.on("connect", () => console.log("Connected:", newSocket.id));
 
-        // Remove old listener before adding new
         newSocket.off("receive_message").on("receive_message", (msg) => {
             const key = makeMsgKey(msg.senderName, msg.text);
             if (recentMessages.current.has(key)) return;
@@ -137,7 +159,26 @@ export default function ChatPage() {
 
     return (
         <div className="h-[100dvh] w-full flex flex-col bg-gradient-to-br from-[#020617] via-[#0b0f26] to-[#1e1b4b] text-white p-6">
-            <h1 className="text-2xl font-bold mb-4">Team Chat</h1>
+            <div className="flex justify-between items-center mb-4">
+  <h1 className="text-2xl font-bold">Team Chat</h1>
+
+  <Button
+    onClick={generateSummary}
+    disabled={loadingSummary}
+    className="bg-purple-200 hover:bg-purple-500"
+  >
+    {loadingSummary ? "Generating..." : "Summarize Chat"}
+  </Button>
+</div>
+
+
+            {/* ✅ Summary Box */}
+            {summary && (
+                <div className="p-3 bg-black/30 border border-purple-700 rounded-md text-sm mb-4">
+                    ✨ <b>Chat Summary:</b>
+                    <p className="mt-1 whitespace-pre-line">{summary}</p>
+                </div>
+            )}
 
             <div className="flex-1 overflow-y-auto space-y-3 p-4 rounded-xl bg-black/20 border border-white/10">
                 {messages.map((msg, i) => (

@@ -35,4 +35,25 @@ router.post("/chat", async (req, res) => {
   }
 });
 
+// ✅ Chat Summary Route
+router.post("/summary", async (req, res) => {
+  try {
+    const { chats } = req.body;
+    if (!chats || chats.length === 0)
+      return res.status(400).json({ error: "No chats to summarize" });
+
+    const prompt = `
+    Summarize the following team chat briefly and clearly in 5-7 lines:
+    
+    ${chats.map((c: any) => `${c.senderName}: ${c.text}`).join("\n")}
+    `;
+
+    const result = await model.generateContent(prompt);
+    res.json({ summary: result.response.text() });
+  } catch (err) {
+    console.error("❌ Summary Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
