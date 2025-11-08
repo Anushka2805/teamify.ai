@@ -11,7 +11,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export const uploadFile = async (req, res) => {
+export const uploadFile = async (req: any, res: any) => {
   try {
     const { teamId } = req.body;
     const file = req.file;
@@ -45,23 +45,22 @@ export const uploadFile = async (req, res) => {
     // Safely remove tmp file
     try {
       fs.unlinkSync(file.path);
-    } catch {}
+    } catch { }
 
     res.status(200).json({ file: fileDoc });
 
-  } catch (err) {
+  } catch (err: any) {
     console.error("❌ Upload Error =>", err);
     res.status(500).json({ message: err.message });
   }
 };
 
-
-export const listFiles = async (req:any, res:any) => {
+export const listFiles = async (req: any, res: any) => {
   try {
     const { teamId } = req.params;
     const files = await FileModel.find({ teamId }).sort({ createdAt: -1 }).limit(200);
     res.json({ files });
-  } catch (err:any) {
+  } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 };

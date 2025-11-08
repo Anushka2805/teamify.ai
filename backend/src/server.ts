@@ -13,7 +13,7 @@ import chatRoutes from "./routes/chat";
 import fileRoutes from "./routes/file";
 import taskRoutes from "./routes/tasks";
 import notificationRoutes from "./routes/notifications";
-import aiRoutes from "./routes/ai";
+const aiRoutes = require("./routes/ai");
 import Message from "./models/Message"; 
 
 dotenv.config();
