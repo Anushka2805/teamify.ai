@@ -17,6 +17,7 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 const links = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -32,12 +33,11 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [userName, setUserName] = useState("");
-  useState(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      setUserName(JSON.parse(user).name);
-    }
+  useEffect(() => {
+    const name = localStorage.getItem("userName");
+    if (name) setUserName(name);
   }, []);
+
 
 
   return (
