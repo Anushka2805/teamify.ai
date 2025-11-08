@@ -5,16 +5,16 @@ import morgan from "morgan";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-import connectDB from "./src/config/db";
+import connectDB from "./config/db";
 
-import authRoutes from "./src/routes/auth";
-import teamRoutes from "./src/routes/team";
-import chatRoutes from "./src/routes/chat";
-import fileRoutes from "./src/routes/file";
-import taskRoutes from "./src/routes/tasks";
-import notificationRoutes from "./src/routes/notifications";
-import aiRoutes from "./src/routes/ai";
-import Message from "./src/models/Message"; 
+import authRoutes from "./routes/auth";
+import teamRoutes from "./routes/team";
+import chatRoutes from "./routes/chat";
+import fileRoutes from "./routes/file";
+import taskRoutes from "./routes/tasks";
+import notificationRoutes from "./routes/notifications";
+import aiRoutes from "./routes/ai";
+import Message from "./models/Message"; 
 
 dotenv.config();
 const app = express();
