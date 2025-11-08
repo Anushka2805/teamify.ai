@@ -1,7 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  turbopack: {},        // ✅ Add this
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   webpack: (config) => {
     config.watchOptions = {
       ignored: ["**/backend/**"],
