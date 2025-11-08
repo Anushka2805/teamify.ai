@@ -11,15 +11,17 @@ import data from "@emoji-mart/data";
 
 export default function ChatPage() {
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [messages, setMessages] = useState<
-        { senderName: string; from: "you" | "team"; text: string }[]
-    >([]);
-
+    const [messages, setMessages] = useState<{ senderName: string; from: "you" | "team"; text: string }[]>([]);
     const [input, setInput] = useState("");
     const [teamId, setTeamId] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    // ✅ Load old messages
+
+    // Duplicate blocker Set
+    const recentMessages = useRef(new Set());
+
+    const makeMsgKey = (name: string, text: string) => `${name}:${text}`;
+
     const fetchMessages = async () => {
         const token = localStorage.getItem("token");
         const team = localStorage.getItem("teamId");
@@ -31,119 +33,108 @@ export default function ChatPage() {
 
         const data = await res.json();
         if (data.messages) {
-            const formatted = data.messages.map((m: any) => ({
-                senderName: m.senderName,
-                text: m.text,
-                from: m.senderName === localStorage.getItem("userName") ? "you" : "team"
-            }));
+            const formatted = [];
+
+            for (let m of data.messages) {
+                const key = makeMsgKey(m.senderName, m.text);
+                if (recentMessages.current.has(key)) continue; // ✅ skip duplicate
+
+                recentMessages.current.add(key);
+                formatted.push({
+                    senderName: m.senderName,
+                    text: m.text,
+                    from: m.senderName === localStorage.getItem("userName") ? "you" : "team",
+                });
+            }
             setMessages(formatted);
         }
     };
 
-
-    // ✅ Initialize socket
     useEffect(() => {
         const newSocket = io("http://localhost:5000", {
             transports: ["websocket", "polling"],
-            withCredentials: true,
         });
+
         setSocket(newSocket);
 
-        newSocket.on("connect", () => {
-            console.log("🟢 Connected:", newSocket.id);
-        });
+        newSocket.on("connect", () => console.log("Connected:", newSocket.id));
 
-        return () => {
-            newSocket.disconnect();
-        };
-    }, []);
+        // Remove old listener before adding new
+        newSocket.off("receive_message").on("receive_message", (msg) => {
+            const key = makeMsgKey(msg.senderName, msg.text);
+            if (recentMessages.current.has(key)) return;
 
-    // ✅ Get teamId
-    useEffect(() => {
-        const stored = localStorage.getItem("teamId");
-        if (stored) setTeamId(stored);
-    }, []);
+            recentMessages.current.add(key);
 
-    // ✅ Join team + listen messages
-    useEffect(() => {
-        if (!socket || !teamId) return;
-
-        socket.emit("join_team", teamId);
-        console.log("✅ Joined Team:", teamId);
-
-        fetchMessages();
-
-        socket.on("receive_message", (msg) => {
             setMessages((prev) => [
                 ...prev,
                 {
                     senderName: msg.senderName,
                     text: msg.text,
-                    from: m.senderName === localStorage.getItem("userName") ? "you" : "team"
-
-                }
+                    from: msg.senderName === localStorage.getItem("userName") ? "you" : "team",
+                },
             ]);
         });
 
         return () => {
-            socket.off("receive_message");
+            newSocket.off("receive_message");
+            newSocket.disconnect();
         };
+    }, []);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("teamId");
+        if (stored) setTeamId(stored);
+    }, []);
+
+    useEffect(() => {
+        if (!socket || !teamId) return;
+        socket.emit("join_team", teamId);
+        fetchMessages();
     }, [socket, teamId]);
 
-
-    // ✅ Send message
     const sendMessage = async () => {
         if (!input.trim() || !teamId || !socket) return;
 
-        const msgData = {
-            teamId,
-            text: input,
-            senderName: localStorage.getItem("userName"),
-        };
+        const senderName = localStorage.getItem("userName") || "Unknown";
+        const key = makeMsgKey(senderName, input);
 
-        // ✅ Save to DB
+        if (!recentMessages.current.has(key)) {
+            recentMessages.current.add(key);
+            setMessages((prev) => [...prev, { senderName, text: input, from: "you" }]);
+        }
+
         const token = localStorage.getItem("token");
+
         await fetch(`http://localhost:5000/api/chat/${teamId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(msgData),
+            body: JSON.stringify({ teamId, text: input, senderName }),
         });
 
-        // ✅ Emit socket
-        socket.emit("send_message", {
-            teamId: localStorage.getItem("teamId"), // ✅ objectId bhejo
-            senderName: localStorage.getItem("userName"),
-            text: input
-        });
-
-
+        socket.emit("send_message", { teamId, senderName, text: input });
         setInput("");
     };
 
-    // ✅ Send file
     const sendFile = (e: any) => {
         const file = e.target.files[0];
         if (!file || !teamId || !socket) return;
 
         const name = localStorage.getItem("userName") || "Unknown";
+        const fileMsg = `📎 File: ${file.name}`;
+        const key = makeMsgKey(name, fileMsg);
 
-        socket.emit("send_message", {
-            teamId,
-            text: `📎 File: ${file.name}`,
-            senderId: socket.id,
-            senderName: name,
-        });
+        if (!recentMessages.current.has(key)) {
+            recentMessages.current.add(key);
+            setMessages((prev) => [...prev, { senderName: name, text: fileMsg, from: "you" }]);
+        }
 
-        setMessages((prev) => [
-            ...prev,
-            { senderName: name, text: `📎 File: ${file.name}`, from: "you" }
-        ]);
+        socket.emit("send_message", { teamId, text: fileMsg, senderName: name });
     };
 
-    // ✅ UI
     return (
         <div className="h-[100dvh] w-full flex flex-col bg-gradient-to-br from-[#020617] via-[#0b0f26] to-[#1e1b4b] text-white p-6">
             <h1 className="text-2xl font-bold mb-4">Team Chat</h1>
@@ -160,7 +151,11 @@ export default function ChatPage() {
                         )}
                     >
                         <div className="flex items-center gap-1 mb-1">
-                            {msg.from === "you" ? <User2 className="w-4 h-4" /> : <Users className="w-4 h-4 text-purple-400" />}
+                            {msg.from === "you" ? (
+                                <User2 className="w-4 h-4" />
+                            ) : (
+                                <Users className="w-4 h-4 text-purple-400" />
+                            )}
                             <span className="text-xs font-semibold">{msg.senderName}</span>
                         </div>
                         <p>{msg.text}</p>
