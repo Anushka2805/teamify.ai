@@ -56,7 +56,7 @@ export default function ChatPage() {
 
         const data = await res.json();
         if (data.messages) {
-            const formatted = [];
+            const formatted: { senderName: string; from: "you" | "team"; text: string }[] = [];
 
             for (let m of data.messages) {
                 const key = makeMsgKey(m.senderName, m.text);
@@ -64,12 +64,14 @@ export default function ChatPage() {
 
                 recentMessages.current.add(key);
                 formatted.push({
-                    senderName: m.senderName,
-                    text: m.text,
+                    senderName: m.senderName ?? "Unknown",
+                    text: m.text ?? "",
                     from: m.senderName === localStorage.getItem("userName") ? "you" : "team",
                 });
             }
+
             setMessages(formatted);
+
         }
     };
 
@@ -160,16 +162,16 @@ export default function ChatPage() {
     return (
         <div className="h-[100dvh] w-full flex flex-col bg-gradient-to-br from-[#020617] via-[#0b0f26] to-[#1e1b4b] text-white p-6">
             <div className="flex justify-between items-center mb-4">
-  <h1 className="text-2xl font-bold">Team Chat</h1>
+                <h1 className="text-2xl font-bold">Team Chat</h1>
 
-  <Button
-    onClick={generateSummary}
-    disabled={loadingSummary}
-    className="bg-purple-200 hover:bg-purple-500"
-  >
-    {loadingSummary ? "Generating..." : "Summarize Chat"}
-  </Button>
-</div>
+                <Button
+                    onClick={generateSummary}
+                    disabled={loadingSummary}
+                    className="bg-purple-200 hover:bg-purple-500"
+                >
+                    {loadingSummary ? "Generating..." : "Summarize Chat"}
+                </Button>
+            </div>
 
 
             {/* ✅ Summary Box */}
