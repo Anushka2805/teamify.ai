@@ -6,6 +6,7 @@ import { Loader2, Plus, Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CreateTeamPage() {
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
     const [teamName, setTeamName] = useState("");
     const [loading, setLoading] = useState(false);
     const [teamId, setTeamId] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export default function CreateTeamPage() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/team/create", {
+            const res = await fetch(`${BASE_URL}/api/team/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -42,9 +43,9 @@ export default function CreateTeamPage() {
                 throw new Error(data.message || "Failed to create team");
             }
 
-setTeamId(data.team._id); // ✅ Mongo ID save karo
-localStorage.setItem("teamId", data.team._id);
-localStorage.setItem("teamCode", data.team.teamCode);
+            setTeamId(data.team._id); // ✅ Mongo ID save karo
+            localStorage.setItem("teamId", data.team._id);
+            localStorage.setItem("teamCode", data.team.teamCode);
 
             toast.success("Team created successfully!");
         } catch (error: any) {

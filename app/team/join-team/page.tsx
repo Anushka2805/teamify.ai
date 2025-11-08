@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function JoinTeamPage() {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function JoinTeamPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/team/join", {
+      const res = await fetch(`${BASE_URL}/api/team/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,12 +45,12 @@ export default function JoinTeamPage() {
 
       toast.success("Team joined successfully!");
 
-// ✅ Save both Mongo _id and teamCode
+      // ✅ Save both Mongo _id and teamCode
 
-localStorage.setItem("teamId", data.team._id);
-localStorage.setItem("teamCode", data.team.teamCode);
+      localStorage.setItem("teamId", data.team._id);
+      localStorage.setItem("teamCode", data.team.teamCode);
 
-router.push("/dashboard");
+      router.push("/dashboard");
 
 
     } catch (err: any) {

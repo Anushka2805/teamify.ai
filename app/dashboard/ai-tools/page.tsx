@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
 export default function AITools() {
+  const API = process.env.NEXT_PUBLIC_API_URL;
   const [pitchInput, setPitchInput] = useState("");
   const [pitchResult, setPitchResult] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function AITools() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/ai/generate-pitch", {
+      const res = await fetch(`${API}/api/ai/generate-pitch`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: pitchInput }),
@@ -52,7 +53,7 @@ export default function AITools() {
     setUserInput("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ai/chat", {
+      const res = await fetch(`${API}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userInput }),

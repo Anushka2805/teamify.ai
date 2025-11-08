@@ -5,6 +5,7 @@ import { Search, Upload, FileText, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function FilesPage() {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const [search, setSearch] = useState("");
   const [files, setFiles] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +16,7 @@ export default function FilesPage() {
   // ✅ Fetch files from backend
   const fetchFiles = async () => {
     if (!teamId || !token) return;
-    const res = await fetch(`http://localhost:5000/api/files/${teamId}`, {
+    const res = await fetch(`${BASE_URL}/api/files/${teamId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -35,7 +36,7 @@ export default function FilesPage() {
     formData.append("file", file);
     formData.append("teamId", teamId);
 
-    await fetch(`http://localhost:5000/api/files/upload`, {
+    await fetch(`${BASE_URL}/api/files/upload`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -105,17 +106,15 @@ export default function FilesPage() {
                 <FileText className="text-purple-400 w-7 h-7" />
                 <div>
                   <p className="font-medium text-sm md:text-base">
-                   <a
-  href={file.fileUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="hover:underline text-blue-400"
-  download
->
-  {file.fileName}
-</a>
-
-
+                    <a
+                      href={file.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-blue-400"
+                      download
+                    >
+                      {file.fileName}
+                    </a>
 
                   </p>
                   <p className="text-xs text-gray-400">

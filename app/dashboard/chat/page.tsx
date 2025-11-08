@@ -30,7 +30,7 @@ export default function ChatPage() {
 
         setLoadingSummary(true);
         try {
-            const res = await fetch("http://localhost:5000/api/ai/summary", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ai/summary`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ chats: messages }),
@@ -50,7 +50,7 @@ export default function ChatPage() {
         const team = localStorage.getItem("teamId");
         if (!team || !token) return;
 
-        const res = await fetch(`http://localhost:5000/api/chat/${team}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${team}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -76,7 +76,7 @@ export default function ChatPage() {
     };
 
     useEffect(() => {
-        const newSocket = io("http://localhost:5000", {
+        const newSocket = io(process.env.NEXT_PUBLIC_API_URL!, {
             transports: ["websocket", "polling"],
         });
 
@@ -130,7 +130,7 @@ export default function ChatPage() {
 
         const token = localStorage.getItem("token");
 
-        await fetch(`http://localhost:5000/api/chat/${teamId}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${teamId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

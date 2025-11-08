@@ -6,6 +6,7 @@ import { Search, UserPlus, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export default function TeamPage() {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const [team, setTeam] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -17,7 +18,7 @@ export default function TeamPage() {
         const token = localStorage.getItem("token");
         if (!token) return toast.error("Login required");
 
-        const res = await fetch("http://localhost:5000/api/team/me", {
+        const res = await fetch(`${BASE_URL}/api/team/me`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

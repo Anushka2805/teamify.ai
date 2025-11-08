@@ -6,6 +6,7 @@ import { Plus, Users, Clock, File, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function DashboardPage() {
+  const API = process.env.NEXT_PUBLIC_API_URL;
   const [team, setTeam] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -24,7 +25,7 @@ export default function DashboardPage() {
           return;
         }
 
-        const res = await fetch("http://localhost:5000/api/team/me", {
+        const res = await fetch(`${API}/api/team/me`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -50,7 +51,7 @@ export default function DashboardPage() {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/tasks/${team?._id}`, {
+        const res = await fetch(`${API}/api/tasks/${team?._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -69,7 +70,7 @@ export default function DashboardPage() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/tasks", {
+      const res = await fetch(`${API}/api/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +99,7 @@ export default function DashboardPage() {
   const updateTaskStatus = async (taskId: string, newStatus: string) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      const res = await fetch(`${API}/api/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

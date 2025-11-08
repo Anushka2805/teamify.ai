@@ -10,6 +10,7 @@ import { ArrowLeft, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SignUp() {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
@@ -24,7 +25,7 @@ export default function SignUp() {
 
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
