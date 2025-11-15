@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";   // ✅ ADDED
+import { useRouter } from "next/navigation";  
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import { toast } from "sonner";
 export default function SignIn() {
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const searchParams = useSearchParams();   
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,8 +21,11 @@ export default function SignIn() {
   });
 
   useEffect(() => {
-    if (searchParams.get("required") === "true") {
-      toast.error("Sign-in required to access the dashboard"); 
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("required") === "true") {
+        toast.error("Sign-in required to access the dashboard");
+      }
     }
   }, []);
 
