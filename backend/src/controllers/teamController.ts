@@ -2,8 +2,9 @@ import Team from "../models/Team";
 import User from "../models/User";
 import { generateTeamCode } from "../utils/genCode";
 import Notification from "../models/Notification";
+import { sendNotification } from "../server";
 
-export const createTeam = async (req:any, res:any) => {
+export const createTeam = async (req: any, res: any) => {
   try {
     const userId = req.user.id;
     const { name, description } = req.body;
@@ -15,16 +16,29 @@ export const createTeam = async (req:any, res:any) => {
     // update user
     await User.findByIdAndUpdate(userId, { teamId: team._id, roleInTeam: "Leader" });
 
-    // notification (optional)
-    await Notification.create({ teamId: team._id, title: "Team Created", subtitle: `${req.user.email} created the team`, type: "info" });
+    // save notification in DB
+    await Notification.create({
+      teamId: team._id,
+      title: "Team Created",
+      subtitle: `${req.user.email} created the team`,
+      type: "info",
+    });
+    // SEND LIVE NOTIFICATION
+    sendNotification(team._id.toString(), {
+      title: "Team Created",
+      subtitle: `${req.user.email} created the team`,
+      type: "join",
+      time: new Date().toISOString(),
+      unread: true,
+    });
 
     res.json({ team });
-  } catch (err:any) {
+  } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 };
 
-export const joinTeam = async (req:any, res:any) => {
+export const joinTeam = async (req: any, res: any) => {
   try {
     const userId = req.user.id;
     const { teamCode } = req.body;
@@ -34,7 +48,7 @@ export const joinTeam = async (req:any, res:any) => {
     if (!team) return res.status(404).json({ message: "Invalid team code" });
 
     // prevent double join
-    if (team.members.some((m:any) => String(m.userId) === String(userId))) {
+    if (team.members.some((m: any) => String(m.userId) === String(userId))) {
       return res.status(400).json({ message: "Already a member" });
     }
 
@@ -43,11 +57,25 @@ export const joinTeam = async (req:any, res:any) => {
 
     await User.findByIdAndUpdate(userId, { teamId: team._id, roleInTeam: "Member" });
 
-    // notification
-    await Notification.create({ teamId: team._id, title: "Team Member Joined", subtitle: `${req.user.email} joined`, type: "join" });
+    // save notification in DB
+    await Notification.create({
+      teamId: team._id,
+      title: "New Team Member",
+      subtitle: `${req.user.email} joined your team`,
+      type: "join",
+    });
+
+    // SEND LIVE NOTIFICATION TO ALL TEAM MEMBERS
+    sendNotification(team._id.toString(), {
+      title: "New Team Member Joined",
+      subtitle: `${req.user.email} joined your team`,
+      type: "join",
+      time: new Date().toISOString(),
+      unread: true,
+    });
 
     res.json({ team });
-  } catch (err:any) {
+  } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 };
@@ -73,13 +101,13 @@ export const getMyTeam = async (req: any, res: any) => {
   }
 };
 
-export const getTeam = async (req:any, res:any) => {
+export const getTeam = async (req: any, res: any) => {
   try {
     const { teamId } = req.params;
     const team = await Team.findById(teamId).populate("members.userId", "name email roleInTeam");
     if (!team) return res.status(404).json({ message: "Team not found" });
     res.json({ team });
-  } catch (err:any) {
+  } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 };

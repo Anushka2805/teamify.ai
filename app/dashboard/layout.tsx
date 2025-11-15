@@ -11,9 +11,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/signin?required=true");
+      router.replace("/signin?required=true");
     }
-  }, [router]);
+  }, []); 
 
   return (
     <div className="flex">

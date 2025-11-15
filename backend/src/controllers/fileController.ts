@@ -3,12 +3,15 @@ import User from "../models/User";
 import cloudinary from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
+import Notification from "../models/Notification";
+import { sendNotification } from "../server";   
+
 dotenv.config();
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export const uploadFile = async (req: any, res: any) => {
@@ -23,13 +26,13 @@ export const uploadFile = async (req: any, res: any) => {
     }
 
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found in database" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     // Upload to Cloudinary
     const result = await cloudinary.v2.uploader.upload(file.path, {
       resource_type: "auto",
       folder: `teamify.ai/${teamId}`,
-      access_mode: "public"
+      access_mode: "public",
     });
 
     // Save file info
@@ -42,15 +45,30 @@ export const uploadFile = async (req: any, res: any) => {
       uploadedByName: user.name,
     });
 
-    // Safely remove tmp file
-    try {
-      fs.unlinkSync(file.path);
-    } catch { }
+    // Remove tmp file
+    try { fs.unlinkSync(file.path); } catch {}
+
+    // Save notification in DB
+    await Notification.create({
+      teamId,
+      title: "New File Uploaded",
+      subtitle: `${user.name} uploaded "${file.originalname}"`,
+      type: "file",
+    });
+
+    // REAL-TIME NOTIFICATION TO TEAM MEMBERS
+    sendNotification(teamId.toString(), {
+      title: "New File Uploaded",
+      subtitle: `${user.name} uploaded "${file.originalname}"`,
+      type: "file",
+      unread: true,
+      time: new Date().toISOString(),
+    });
 
     res.status(200).json({ file: fileDoc });
 
   } catch (err: any) {
-    console.error("❌ Upload Error =>", err);
+    console.error("❌ Upload Error:", err);
     res.status(500).json({ message: err.message });
   }
 };

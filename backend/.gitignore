@@ -1,38 +1,21 @@
+# Node Modules
+node_modules/
 
-### NextJS ###
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# TypeScript Output
+dist/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-#  env files
-.env*.local
+# Env
 .env
+.env.local
+.env.development
+.env.production
 
-# vercel
-.vercel
+# Logs
+*.log
+logs/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# OS Junk
+.DS_Store
 
+# IDE
+.vscode/
