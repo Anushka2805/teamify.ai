@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";   // ✅ ADDED
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,12 +12,20 @@ import { toast } from "sonner";
 export default function SignIn() {
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
+  const searchParams = useSearchParams();   
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (searchParams.get("required") === "true") {
+      toast.error("Sign-in required to access the dashboard"); 
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,14 +44,14 @@ export default function SignIn() {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ Save token & user data
+      //  Save token & user data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userName", data.user.name);
 
       toast.success("Welcome back " + data.user.name + " 🚀");
 
-      // ✅ Redirect to dashboard or team page
+      // Redirect to dashboard or team page
       router.push("/dashboard");
 
     } catch (error: any) {

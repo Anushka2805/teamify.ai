@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Home,
@@ -15,9 +15,10 @@ import {
   X,
   Zap,
   User,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { toast } from "sonner";
 
 const links = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -31,6 +32,8 @@ const links = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [userName, setUserName] = useState("");
   useEffect(() => {
@@ -38,7 +41,15 @@ export default function Sidebar() {
     if (name) setUserName(name);
   }, []);
 
+  //  LOGOUT FUNCTION
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userName");
 
+    toast.success("Logged out successfully ");
+    router.push("/signin");
+  };
 
   return (
     <>
@@ -96,17 +107,25 @@ export default function Sidebar() {
 
         {/* Bottom Settings */}
         <div className="px-4 py-2 border-t border-white/10">
-          <Link
-            href="/dashboard/settings"
-            onClick={() => setOpen(false)}
+          {/* Username */}
+          <div
             className={cn(
-              "flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#111827]/50 transition-all",
+              "flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#111827]/50 transition-all mb-2",
               pathname === "/settings" && "bg-[#111827] text-white"
             )}
           >
             <User className="w-5 h-5" />
             <span className="font-medium">{userName || "User"}</span>
-          </Link>
+          </div>
+
+          {/* LOGOUT BUTTON */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-400 hover:text-white hover:bg-red-500/20 transition-all"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">Logout</span>
+          </button>
         </div>
       </aside>
 

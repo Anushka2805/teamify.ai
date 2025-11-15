@@ -69,7 +69,7 @@ export default function Landing() {
 
             {/* Footer */}
             <footer className="relative z-10 border-t border-slate-800 py-6 text-center text-slate-500 text-sm">
-                © {new Date().getFullYear()} HackCollab. Built for creators & innovators.
+                © {new Date().getFullYear()} Teamify.AI . Built for innovators & developers .
             </footer>
         </div>
     );
