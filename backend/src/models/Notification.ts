@@ -5,12 +5,15 @@ const NotificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Team",
     required: true,
-    index: true,
+    index: true
   },
+
   title: { type: String, required: true },
   subtitle: { type: String, default: "" },
   type: { type: String, default: "info" },
-  createdAt: { type: Date, default: Date.now },
+
+  read: { type: Boolean, default: false },  
+  createdAt: { type: Date, default: Date.now }
 });
 
 export default mongoose.models.Notification ||
