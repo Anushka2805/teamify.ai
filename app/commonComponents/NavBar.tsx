@@ -42,7 +42,6 @@ const Navbar = () => {
 
     const navLinks = [
         { label: "Home", target: "home" },
-        { label: "Features", target: "features" },
     ];
 
     return (
@@ -56,7 +55,8 @@ const Navbar = () => {
                 {/* Left Side: Logo/Name */}
                 <div
                     onClick={() => handleNavClick("home")}
-                    className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 cursor-pointer"
+                    className="text-xl md:text-2xl font-semibold tracking-[0.25em] text-slate-200 
+               cursor-pointer hover:text-blue-300 transition-all duration-300"
                 >
                     TEAMIFY.AI
                 </div>
